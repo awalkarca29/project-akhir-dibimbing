@@ -10,6 +10,7 @@ type ProductRepository interface {
 	FindAll() ([]entity.Product, error)
 	FindByID(ID int) (entity.Product, error)
 	Save(product entity.Product) (entity.Product, error)
+	Update(product entity.Product) (entity.Product, error)
 }
 
 type productRepository struct {
@@ -43,6 +44,15 @@ func (r *productRepository) FindByID(ID int) (entity.Product, error) {
 
 func (r *productRepository) Save(product entity.Product) (entity.Product, error) {
 	err := r.db.Create(&product).Error
+	if err != nil {
+		return product, err
+	}
+
+	return product, nil
+}
+
+func (r *productRepository) Update(product entity.Product) (entity.Product, error) {
+	err := r.db.Save(&product).Error
 	if err != nil {
 		return product, err
 	}

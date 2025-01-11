@@ -22,6 +22,7 @@ type ProductService interface {
 	GetAllProducts() ([]entity.Product, error)
 	GetProductByID(input GetProductDetailInput) (entity.Product, error)
 	CreateProduct(input CreateProductInput) (entity.Product, error)
+	UpdateProduct(inputID GetProductDetailInput, inputData CreateProductInput) (entity.Product, error)
 }
 
 type productService struct {
@@ -64,4 +65,24 @@ func (s *productService) CreateProduct(input CreateProductInput) (entity.Product
 	}
 
 	return newProduct, nil
+}
+
+func (s *productService) UpdateProduct(inputID GetProductDetailInput, inputData CreateProductInput) (entity.Product, error) {
+	product, err := s.productRepository.FindByID(inputID.ID)
+	if err != nil {
+		return product, err
+	}
+
+	product.Name = inputData.Name
+	product.Description = inputData.Description
+	product.Price = inputData.Price
+	product.Stock = inputData.Stock
+	// product.Slug = slug.Make(inputData.Name)
+
+	updatedProduct, err := s.productRepository.Update(product)
+	if err != nil {
+		return updatedProduct, err
+	}
+
+	return updatedProduct, nil
 }
