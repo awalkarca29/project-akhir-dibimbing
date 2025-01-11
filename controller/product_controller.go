@@ -24,6 +24,6 @@ func (h *productController) GetAllProducts(c *gin.Context) {
 		return
 	}
 
-	response := helper.APIResponse("List of products", http.StatusOK, "success", products)
+	response := helper.APIResponse("List of products", http.StatusOK, "success", helper.FormatProducts(products))
 	c.JSON(http.StatusOK, response)
 }
