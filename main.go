@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"project-akhir-awal/controller"
 	"project-akhir-awal/middleware"
@@ -30,13 +29,11 @@ func main() {
 	productService := service.NewProductService(productRepository)
 	authService := service.NewAuthService()
 
-	products, _ := productService.FindAllProducts()
-	fmt.Println(len(products))
-
 	authMiddleware := middleware.AuthMiddleware(authService, userService)
 
 	roleController := controller.NewRoleController(roleService)
 	userController := controller.NewUserController(userService, authService)
+	productController := controller.NewProductController(productService)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
@@ -48,6 +45,8 @@ func main() {
 	api.POST("/email_checkers", userController.CheckEmailAvailability)
 	// api.POST("/upload_photo", authMiddleware(authService, userService), userController.UploadPhoto)
 	api.POST("/upload_photo", authMiddleware, userController.UploadPhoto)
+
+	api.GET("/products", productController.GetAllProducts)
 
 	router.Run()
 }

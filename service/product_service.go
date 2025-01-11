@@ -6,7 +6,7 @@ import (
 )
 
 type ProductService interface {
-	FindAllProducts() ([]entity.Product, error)
+	GetAllProducts() ([]entity.Product, error)
 }
 
 type productService struct {
@@ -17,7 +17,7 @@ func NewProductService(productRepository repository.ProductRepository) *productS
 	return &productService{productRepository}
 }
 
-func (s *productService) FindAllProducts() ([]entity.Product, error) {
+func (s *productService) GetAllProducts() ([]entity.Product, error) {
 	products, err := s.productRepository.FindAll()
 	if err != nil {
 		return products, err
