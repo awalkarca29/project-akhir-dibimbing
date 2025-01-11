@@ -19,17 +19,26 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
+	roleRepository := repository.NewRoleRepository(db)
+	roleService := service.NewRoleService(roleRepository)
+	roleController := controller.NewRoleController(roleService)
+
 	userRepository := repository.NewUserRepository(db)
 	userService := service.NewUserService(userRepository)
+
+	userService.UploadPhoto(2, "images/1-profile.png")
 
 	userController := controller.NewUserController(userService)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
 
+	api.POST("/role", roleController.CreateRole)
+
 	api.POST("/register", userController.Register)
 	api.POST("/login", userController.Login)
 	api.POST("/email_checkers", userController.CheckEmailAvailability)
+	api.POST("/upload_photo", userController.UploadPhoto)
 
 	router.Run()
 }
