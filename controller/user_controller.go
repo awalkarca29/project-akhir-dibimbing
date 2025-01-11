@@ -16,8 +16,8 @@ func NewUserController(userService service.UserService) *userController {
 	return &userController{userService}
 }
 
-func (h *userController) RegisterUser(c *gin.Context) {
-	var input service.RegisterUserInput
+func (h *userController) Register(c *gin.Context) {
+	var input service.RegisterInput
 
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
@@ -29,11 +29,13 @@ func (h *userController) RegisterUser(c *gin.Context) {
 		return
 	}
 
-	newUser, err := h.userService.RegisterUser(input)
+	newUser, err := h.userService.Register(input)
 
 	if err != nil {
-		response := helper.APIResponse("Register account failed", http.StatusBadRequest, "error", nil)
-		c.JSON(http.StatusBadRequest, response)
+		errorMessage := gin.H{"errors": err.Error()}
+
+		response := helper.APIResponse("Register account failed", http.StatusUnprocessableEntity, "error", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
 
@@ -42,6 +44,36 @@ func (h *userController) RegisterUser(c *gin.Context) {
 	formatter := helper.FormatUser(newUser, "tokentokentokentokentoken")
 
 	response := helper.APIResponse("Account has been registered", http.StatusOK, "success", formatter)
+
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *userController) Login(c *gin.Context) {
+	var input service.LoginInput
+
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+
+		response := helper.APIResponse("Login failed", http.StatusUnprocessableEntity, "error", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	loginUser, err := h.userService.Login(input)
+
+	if err != nil {
+		errorMessage := gin.H{"errors": err.Error()}
+
+		response := helper.APIResponse("Login failed", http.StatusUnprocessableEntity, "error", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	formatter := helper.FormatUser(loginUser, "tokentokentoken")
+
+	response := helper.APIResponse("Successfully Login", http.StatusOK, "success", formatter)
 
 	c.JSON(http.StatusOK, response)
 }
