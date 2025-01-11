@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"project-akhir-awal/controller"
 	"project-akhir-awal/middleware"
@@ -29,6 +30,21 @@ func main() {
 	authService := service.NewAuthService()
 	authMiddleware := middleware.AuthMiddleware(authService, userService)
 	userController := controller.NewUserController(userService, authService)
+
+	productRepository := repository.NewProductRepository(db)
+
+	products, err := productRepository.FindAll()
+
+	fmt.Println("debug")
+	fmt.Println("debug")
+	fmt.Println("debug")
+	fmt.Println(len(products))
+	for _, product := range products {
+		fmt.Println(product.Name)
+		if len(product.ProductImages) > 0 {
+			fmt.Println(product.ProductImages[0].FileName)
+		}
+	}
 
 	router := gin.Default()
 	api := router.Group("/api/v1")

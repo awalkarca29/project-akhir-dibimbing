@@ -143,7 +143,7 @@ func (h *userController) UploadPhoto(c *gin.Context) {
 	currentUser := c.MustGet("currentUser").(entity.User)
 	userID := currentUser.ID
 
-	path := fmt.Sprintf("public/%d-%s", userID, file.Filename)
+	path := fmt.Sprintf("public/user/%d-%s", userID, file.Filename)
 
 	err = c.SaveUploadedFile(file, path)
 	if err != nil {
