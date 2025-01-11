@@ -36,6 +36,8 @@ func main() {
 	productController := controller.NewProductController(productService)
 
 	router := gin.Default()
+	router.Static("/photo", "./public/user")
+	router.Static("/image", "./public/product")
 	api := router.Group("/api/v1")
 
 	api.POST("/role", roleController.CreateRole)

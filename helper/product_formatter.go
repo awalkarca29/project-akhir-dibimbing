@@ -6,6 +6,7 @@ type ProductFormatter struct {
 	ID          int    `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
+	Slug        string `json:"slug"`
 	ImageURL    string `json:"image_url"`
 	Price       int    `json:"price"`
 	Stock       int    `json:"stock"`
@@ -16,6 +17,7 @@ func FormatProduct(product entity.Product) ProductFormatter {
 	productFormatter.ID = product.ID
 	productFormatter.Name = product.Name
 	productFormatter.Description = product.Description
+	productFormatter.Slug = product.Slug
 	productFormatter.Price = product.Price
 	productFormatter.Stock = product.Stock
 	productFormatter.ImageURL = ""
