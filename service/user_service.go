@@ -28,6 +28,7 @@ type UserService interface {
 	Login(input LoginInput) (entity.User, error)
 	IsEmailAvailable(input CheckEmailInput) (bool, error)
 	UploadPhoto(ID int, fileLocation string) (entity.User, error)
+	GetUserByID(ID int) (entity.User, error)
 }
 
 type userService struct {
@@ -109,4 +110,17 @@ func (s *userService) UploadPhoto(ID int, fileLocation string) (entity.User, err
 	}
 
 	return updatedUser, nil
+}
+
+func (s *userService) GetUserByID(ID int) (entity.User, error) {
+	user, err := s.userRepository.FindByID(ID)
+	if err != nil {
+		return user, err
+	}
+
+	if user.ID == 0 {
+		return user, errors.New("no user found on that id")
+	}
+
+	return user, nil
 }

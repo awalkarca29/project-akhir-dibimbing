@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"net/http"
+	"project-akhir-awal/entity"
 	"project-akhir-awal/helper"
 	"project-akhir-awal/service"
 
@@ -139,7 +140,8 @@ func (h *userController) UploadPhoto(c *gin.Context) {
 		return
 	}
 
-	userID := 2
+	currentUser := c.MustGet("currentUser").(entity.User)
+	userID := currentUser.ID
 
 	path := fmt.Sprintf("public/%d-%s", userID, file.Filename)
 
