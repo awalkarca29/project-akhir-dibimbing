@@ -11,10 +11,11 @@ import (
 
 type userController struct {
 	userService service.UserService
+	authService service.AuthService
 }
 
-func NewUserController(userService service.UserService) *userController {
-	return &userController{userService}
+func NewUserController(userService service.UserService, authService service.AuthService) *userController {
+	return &userController{userService, authService}
 }
 
 func (h *userController) Register(c *gin.Context) {
@@ -31,7 +32,6 @@ func (h *userController) Register(c *gin.Context) {
 	}
 
 	newUser, err := h.userService.Register(input)
-
 	if err != nil {
 		errorMessage := gin.H{"errors": err.Error()}
 
@@ -40,9 +40,16 @@ func (h *userController) Register(c *gin.Context) {
 		return
 	}
 
-	// token, err := h.jwtService.GenerateToken()
+	token, err := h.authService.GenerateToken(newUser.ID)
+	if err != nil {
+		errorMessage := gin.H{"errors": err.Error()}
 
-	formatter := helper.FormatUser(newUser, "tokentokentokentokentoken")
+		response := helper.APIResponse("Register account failed", http.StatusUnprocessableEntity, "error", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	formatter := helper.FormatUser(newUser, token)
 
 	response := helper.APIResponse("Account has been registered", http.StatusOK, "success", formatter)
 
@@ -63,7 +70,6 @@ func (h *userController) Login(c *gin.Context) {
 	}
 
 	loginUser, err := h.userService.Login(input)
-
 	if err != nil {
 		errorMessage := gin.H{"errors": err.Error()}
 
@@ -72,7 +78,16 @@ func (h *userController) Login(c *gin.Context) {
 		return
 	}
 
-	formatter := helper.FormatUser(loginUser, "tokentokentoken")
+	token, err := h.authService.GenerateToken(loginUser.ID)
+	if err != nil {
+		errorMessage := gin.H{"errors": err.Error()}
+
+		response := helper.APIResponse("Login failed", http.StatusUnprocessableEntity, "error", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	formatter := helper.FormatUser(loginUser, token)
 
 	response := helper.APIResponse("Successfully Login", http.StatusOK, "success", formatter)
 

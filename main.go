@@ -25,10 +25,8 @@ func main() {
 
 	userRepository := repository.NewUserRepository(db)
 	userService := service.NewUserService(userRepository)
-
-	userService.UploadPhoto(2, "images/1-profile.png")
-
-	userController := controller.NewUserController(userService)
+	authService := service.NewAuthService()
+	userController := controller.NewUserController(userService, authService)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
