@@ -49,6 +49,7 @@ func main() {
 	api.POST("/upload_photo", authMiddleware, userController.UploadPhoto)
 
 	api.GET("/products", productController.GetAllProducts)
+	api.GET("/products/:id", productController.GetProduct)
 
 	router.Run()
 }
