@@ -22,29 +22,21 @@ func main() {
 	}
 
 	roleRepository := repository.NewRoleRepository(db)
-	roleService := service.NewRoleService(roleRepository)
-	roleController := controller.NewRoleController(roleService)
-
 	userRepository := repository.NewUserRepository(db)
-	userService := service.NewUserService(userRepository)
-	authService := service.NewAuthService()
-	authMiddleware := middleware.AuthMiddleware(authService, userService)
-	userController := controller.NewUserController(userService, authService)
-
 	productRepository := repository.NewProductRepository(db)
 
-	products, err := productRepository.FindAll()
+	roleService := service.NewRoleService(roleRepository)
+	userService := service.NewUserService(userRepository)
+	productService := service.NewProductService(productRepository)
+	authService := service.NewAuthService()
 
-	fmt.Println("debug")
-	fmt.Println("debug")
-	fmt.Println("debug")
+	products, _ := productService.FindAllProducts()
 	fmt.Println(len(products))
-	for _, product := range products {
-		fmt.Println(product.Name)
-		if len(product.ProductImages) > 0 {
-			fmt.Println(product.ProductImages[0].FileName)
-		}
-	}
+
+	authMiddleware := middleware.AuthMiddleware(authService, userService)
+
+	roleController := controller.NewRoleController(roleService)
+	userController := controller.NewUserController(userService, authService)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
