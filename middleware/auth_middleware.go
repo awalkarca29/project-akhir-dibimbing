@@ -13,7 +13,6 @@ import (
 func AuthMiddleware(authService service.AuthService, userService service.UserService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
-
 		if !strings.Contains(authHeader, "Bearer") {
 			response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
@@ -34,7 +33,6 @@ func AuthMiddleware(authService service.AuthService, userService service.UserSer
 		}
 
 		claim, ok := token.Claims.(jwt.MapClaims)
-
 		if !ok || !token.Valid {
 			response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
