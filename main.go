@@ -50,6 +50,7 @@ func main() {
 
 	api.GET("/products", productController.GetAllProducts)
 	api.GET("/products/:id", productController.GetProduct)
+	api.POST("/products", productController.CreateProduct)
 
 	router.Run()
 }

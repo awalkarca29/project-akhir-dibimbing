@@ -48,3 +48,27 @@ func (h *productController) GetProduct(c *gin.Context) {
 	response := helper.APIResponse("Product detail", http.StatusOK, "success", helper.FormatProductDetail(productDetail))
 	c.JSON(http.StatusOK, response)
 }
+
+func (h *productController) CreateProduct(c *gin.Context) {
+	var input service.CreateProductInput
+
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+
+		response := helper.APIResponse("Failed to create product", http.StatusUnprocessableEntity, "error", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	newProduct, err := h.productService.CreateProduct(input)
+	if err != nil {
+		response := helper.APIResponse("Failed to create product", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := helper.APIResponse("Success to create product", http.StatusOK, "error", helper.FormatProduct(newProduct))
+	c.JSON(http.StatusOK, response)
+}
