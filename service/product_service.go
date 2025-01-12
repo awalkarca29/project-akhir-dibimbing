@@ -20,7 +20,7 @@ type CreateProductInput struct {
 
 type UploadImageInput struct {
 	ProductID int  `form:"product_id" binding:"required"`
-	IsPrimary bool `form:"is_primary" binding:"required"`
+	IsPrimary bool `form:"is_primary"`
 }
 
 type ProductService interface {
