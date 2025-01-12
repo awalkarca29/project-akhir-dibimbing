@@ -66,7 +66,8 @@ func main() {
 	api.POST("/product-image", productController.UploadImage)
 
 	//!! Transaction Route
-	api.GET("/products/:id/transactions", authMiddleware, transactionController.GetCampaignTransaction)
+	api.GET("/products/:id/transactions", authMiddleware, transactionController.GetProductTransactions)
+	api.GET("/transactions", authMiddleware, transactionController.GetUserTransactions)
 
 	router.Run()
 }
