@@ -13,6 +13,7 @@ import (
 )
 
 func main() {
+	//!! Database
 	dsn := "root:@tcp(127.0.0.1:3306)/project_akhir_dibimbing?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
@@ -20,39 +21,52 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
+	//!! Repository
 	roleRepository := repository.NewRoleRepository(db)
 	userRepository := repository.NewUserRepository(db)
 	productRepository := repository.NewProductRepository(db)
+	transactionRepository := repository.NewTransactionRepository(db)
 
+	//!! Service
 	roleService := service.NewRoleService(roleRepository)
 	userService := service.NewUserService(userRepository)
 	productService := service.NewProductService(productRepository)
+	transactionService := service.NewTransactionService(transactionRepository)
 	authService := service.NewAuthService()
 
+	//!! Middleware
 	authMiddleware := middleware.AuthMiddleware(authService, userService)
 
+	//!! Controller
 	roleController := controller.NewRoleController(roleService)
 	userController := controller.NewUserController(userService, authService)
 	productController := controller.NewProductController(productService)
+	transactionController := controller.NewTransactionController(transactionService)
 
 	router := gin.Default()
 	router.Static("/photo", "./public/user")
 	router.Static("/image", "./public/product")
 	api := router.Group("/api/v1")
 
+	//!! Role Route
 	api.POST("/role", roleController.CreateRole)
 
+	//!! User Route
 	api.POST("/register", userController.Register)
 	api.POST("/login", userController.Login)
 	api.POST("/email-checkers", userController.CheckEmailAvailability)
 	// api.POST("/upload_photo", authMiddleware(authService, userService), userController.UploadPhoto)
 	api.POST("/upload-photo", authMiddleware, userController.UploadPhoto)
 
+	//!! Product Route
 	api.GET("/products", productController.GetAllProducts)
 	api.GET("/products/:id", productController.GetProduct)
 	api.POST("/products", productController.CreateProduct)
 	api.PUT("/products/:id", productController.UpdateProduct)
 	api.POST("/product-image", productController.UploadImage)
+
+	//!! Transaction Route
+	api.GET("/products/:id/transactions", authMiddleware, transactionController.GetCampaignTransaction)
 
 	router.Run()
 }

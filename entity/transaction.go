@@ -1,8 +1,10 @@
 package entity
 
-import "time"
+import (
+	"time"
+)
 
-type Order struct {
+type Transaction struct {
 	ID            int
 	ProductID     int
 	UserID        int
@@ -10,6 +12,8 @@ type Order struct {
 	Total         int
 	PaymentMethod string
 	Status        string
+	User          User
+	Product       Product
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 }
