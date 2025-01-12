@@ -18,11 +18,17 @@ type CreateProductInput struct {
 	Stock       int    `json:"stock" binding:"required"`
 }
 
+type UploadImageInput struct {
+	ProductID int  `form:"product_id" binding:"required"`
+	IsPrimary bool `form:"is_primary" binding:"required"`
+}
+
 type ProductService interface {
 	GetAllProducts() ([]entity.Product, error)
 	GetProductByID(input GetProductDetailInput) (entity.Product, error)
 	CreateProduct(input CreateProductInput) (entity.Product, error)
 	UpdateProduct(inputID GetProductDetailInput, inputData CreateProductInput) (entity.Product, error)
+	UploadImage(input UploadImageInput, fileLocation string) (entity.ProductImage, error)
 }
 
 type productService struct {
@@ -85,4 +91,29 @@ func (s *productService) UpdateProduct(inputID GetProductDetailInput, inputData 
 	}
 
 	return updatedProduct, nil
+}
+
+func (s *productService) UploadImage(input UploadImageInput, fileLocation string) (entity.ProductImage, error) {
+	isPrimary := 0
+
+	if input.IsPrimary {
+		isPrimary = 1
+
+		_, err := s.productRepository.MarkAllImagesAsNonPrimary(input.ProductID)
+		if err != nil {
+			return entity.ProductImage{}, err
+		}
+	}
+
+	productImage := entity.ProductImage{}
+	productImage.ProductID = input.ProductID
+	productImage.IsPrimary = isPrimary
+	productImage.FileName = fileLocation
+
+	newUploadImage, err := s.productRepository.UploadImage(productImage)
+	if err != nil {
+		return newUploadImage, err
+	}
+
+	return newUploadImage, nil
 }

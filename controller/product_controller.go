@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"fmt"
+	"math/rand"
 	"net/http"
 	"project-akhir-awal/helper"
 	"project-akhir-awal/service"
@@ -103,5 +105,57 @@ func (h *productController) UpdateProduct(c *gin.Context) {
 	}
 
 	response := helper.APIResponse("Success to update product", http.StatusOK, "success", helper.FormatProduct(updatedProduct))
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *productController) UploadImage(c *gin.Context) {
+	var input service.UploadImageInput
+
+	err := c.ShouldBind(&input)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+
+		response := helper.APIResponse("Failed to upload image", http.StatusUnprocessableEntity, "error", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	file, err := c.FormFile("image")
+	if err != nil {
+		data := gin.H{"is_uploaded": false}
+
+		response := helper.APIResponse("Failed to upload image", http.StatusBadRequest, "error", data)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	// currentProduct := c.MustGet("currentUser").(entity.User)
+	// userID := currentUser.ID
+
+	path := fmt.Sprintf("public/product/%d-%s", rand.Int(), file.Filename)
+	// path := fmt.Sprintf("public/product/%d-%s", input.ProductID, file.Filename)
+
+	err = c.SaveUploadedFile(file, path)
+	if err != nil {
+		data := gin.H{"is_uploaded": false}
+
+		response := helper.APIResponse("Failed to upload image", http.StatusBadRequest, "error", data)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	_, err = h.productService.UploadImage(input, path)
+	if err != nil {
+		data := gin.H{"is_uploaded": false}
+
+		response := helper.APIResponse("Failed to upload image", http.StatusBadRequest, "error", data)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	data := gin.H{"is_uploaded": true}
+
+	response := helper.APIResponse("Image successfully uploaded", http.StatusOK, "success", data)
 	c.JSON(http.StatusOK, response)
 }

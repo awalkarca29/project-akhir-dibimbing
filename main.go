@@ -44,14 +44,15 @@ func main() {
 
 	api.POST("/register", userController.Register)
 	api.POST("/login", userController.Login)
-	api.POST("/email_checkers", userController.CheckEmailAvailability)
+	api.POST("/email-checkers", userController.CheckEmailAvailability)
 	// api.POST("/upload_photo", authMiddleware(authService, userService), userController.UploadPhoto)
-	api.POST("/upload_photo", authMiddleware, userController.UploadPhoto)
+	api.POST("/upload-photo", authMiddleware, userController.UploadPhoto)
 
 	api.GET("/products", productController.GetAllProducts)
 	api.GET("/products/:id", productController.GetProduct)
 	api.POST("/products", productController.CreateProduct)
 	api.PUT("/products/:id", productController.UpdateProduct)
+	api.POST("/product-image", productController.UploadImage)
 
 	router.Run()
 }

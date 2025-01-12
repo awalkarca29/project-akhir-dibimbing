@@ -11,6 +11,8 @@ type ProductRepository interface {
 	FindByID(ID int) (entity.Product, error)
 	Save(product entity.Product) (entity.Product, error)
 	Update(product entity.Product) (entity.Product, error)
+	UploadImage(productImage entity.ProductImage) (entity.ProductImage, error)
+	MarkAllImagesAsNonPrimary(productID int) (bool, error)
 }
 
 type productRepository struct {
@@ -58,4 +60,22 @@ func (r *productRepository) Update(product entity.Product) (entity.Product, erro
 	}
 
 	return product, nil
+}
+
+func (r *productRepository) UploadImage(productImage entity.ProductImage) (entity.ProductImage, error) {
+	err := r.db.Create(&productImage).Error
+	if err != nil {
+		return productImage, err
+	}
+
+	return productImage, nil
+}
+
+func (r *productRepository) MarkAllImagesAsNonPrimary(productID int) (bool, error) {
+	err := r.db.Model(&entity.ProductImage{}).Where("product_id = ?", productID).Update("is_primary", false).Error
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }

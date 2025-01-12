@@ -135,7 +135,7 @@ func (h *userController) UploadPhoto(c *gin.Context) {
 	if err != nil {
 		data := gin.H{"is_uploaded": false}
 
-		response := helper.APIResponse("Failed to upload Photo", http.StatusBadRequest, "error", data)
+		response := helper.APIResponse("Failed to upload photo", http.StatusBadRequest, "error", data)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
@@ -149,7 +149,7 @@ func (h *userController) UploadPhoto(c *gin.Context) {
 	if err != nil {
 		data := gin.H{"is_uploaded": false}
 
-		response := helper.APIResponse("Failed to upload Photo", http.StatusBadRequest, "error", data)
+		response := helper.APIResponse("Failed to upload photo", http.StatusBadRequest, "error", data)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
