@@ -11,6 +11,7 @@ type ProductRepository interface {
 	FindByID(ID int) (entity.Product, error)
 	Save(product entity.Product) (entity.Product, error)
 	Update(product entity.Product) (entity.Product, error)
+	Delete(product entity.Product) (entity.Product, error)
 	UploadImage(productImage entity.ProductImage) (entity.ProductImage, error)
 	MarkAllImagesAsNonPrimary(productID int) (bool, error)
 }
@@ -55,6 +56,15 @@ func (r *productRepository) Save(product entity.Product) (entity.Product, error)
 
 func (r *productRepository) Update(product entity.Product) (entity.Product, error) {
 	err := r.db.Save(&product).Error
+	if err != nil {
+		return product, err
+	}
+
+	return product, nil
+}
+
+func (r *productRepository) Delete(product entity.Product) (entity.Product, error) {
+	err := r.db.Delete(&product).Error
 	if err != nil {
 		return product, err
 	}

@@ -159,3 +159,24 @@ func (h *productController) UploadImage(c *gin.Context) {
 	response := helper.APIResponse("Image successfully uploaded", http.StatusOK, "success", data)
 	c.JSON(http.StatusOK, response)
 }
+
+func (h *productController) DeleteProduct(c *gin.Context) {
+	var input service.GetProductDetailInput
+
+	err := c.ShouldBindUri(&input)
+	if err != nil {
+		response := helper.APIResponse("Failed to delete product", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	deletedProduct, err := h.productService.DeleteProduct(input)
+	if err != nil {
+		response := helper.APIResponse("Failed to update product", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := helper.APIResponse("Success to delete product", http.StatusOK, "success", helper.FormatProductDetail(deletedProduct))
+	c.JSON(http.StatusOK, response)
+}

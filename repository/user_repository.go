@@ -10,6 +10,7 @@ type UserRepository interface {
 	Save(user entity.User) (entity.User, error)
 	FindByEmail(email string) (entity.User, error)
 	FindByID(ID int) (entity.User, error)
+	FindByRoleID(RoleID int) (entity.User, error)
 	Update(user entity.User) (entity.User, error)
 }
 
@@ -45,6 +46,17 @@ func (r *userRepository) FindByID(ID int) (entity.User, error) {
 	var user entity.User
 
 	err := r.db.Where("id = ?", ID).Find(&user).Error
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
+}
+
+func (r *userRepository) FindByRoleID(RoleID int) (entity.User, error) {
+	var user entity.User
+
+	err := r.db.Where("role_id = ?", RoleID).Find(&user).Error
 	if err != nil {
 		return user, err
 	}

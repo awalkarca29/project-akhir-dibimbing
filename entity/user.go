@@ -4,7 +4,8 @@ import "time"
 
 type User struct {
 	ID        int
-	RoleId    int
+	RoleID    int
+	Role      Role
 	Name      string
 	Email     string
 	Password  string

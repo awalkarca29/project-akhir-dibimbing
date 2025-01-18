@@ -29,6 +29,7 @@ type UserService interface {
 	IsEmailAvailable(input CheckEmailInput) (bool, error)
 	UploadPhoto(ID int, fileLocation string) (entity.User, error)
 	GetUserByID(ID int) (entity.User, error)
+	GetUserByRoleID(RoleID int) (entity.User, error)
 }
 
 type userService struct {
@@ -50,7 +51,7 @@ func (s *userService) Register(input RegisterInput) (entity.User, error) {
 	}
 
 	user.Password = string(password)
-	user.RoleId = 2
+	user.RoleID = 2
 
 	newUser, err := s.userRepository.Save(user)
 	if err != nil {
@@ -120,6 +121,19 @@ func (s *userService) GetUserByID(ID int) (entity.User, error) {
 
 	if user.ID == 0 {
 		return user, errors.New("no user found on that id")
+	}
+
+	return user, nil
+}
+
+func (s *userService) GetUserByRoleID(RoleID int) (entity.User, error) {
+	user, err := s.userRepository.FindByRoleID(RoleID)
+	if err != nil {
+		return user, err
+	}
+
+	if user.RoleID == 0 {
+		return user, errors.New("no role found on that id")
 	}
 
 	return user, nil

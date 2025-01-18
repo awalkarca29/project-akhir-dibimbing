@@ -28,6 +28,7 @@ type ProductService interface {
 	GetProductByID(input GetProductDetailInput) (entity.Product, error)
 	CreateProduct(input CreateProductInput) (entity.Product, error)
 	UpdateProduct(inputID GetProductDetailInput, inputData CreateProductInput) (entity.Product, error)
+	DeleteProduct(inputID GetProductDetailInput) (entity.Product, error)
 	UploadImage(input UploadImageInput, fileLocation string) (entity.ProductImage, error)
 }
 
@@ -116,4 +117,18 @@ func (s *productService) UploadImage(input UploadImageInput, fileLocation string
 	}
 
 	return newUploadImage, nil
+}
+
+func (s *productService) DeleteProduct(inputID GetProductDetailInput) (entity.Product, error) {
+	product, err := s.productRepository.FindByID(inputID.ID)
+	if err != nil {
+		return product, err
+	}
+
+	deleteProduct, err := s.productRepository.Delete(product)
+	if err != nil {
+		return deleteProduct, err
+	}
+
+	return deleteProduct, nil
 }

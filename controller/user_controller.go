@@ -41,7 +41,7 @@ func (h *userController) Register(c *gin.Context) {
 		return
 	}
 
-	token, err := h.authService.GenerateToken(newUser.ID)
+	token, err := h.authService.GenerateToken(newUser.ID, newUser.RoleID)
 	if err != nil {
 		errorMessage := gin.H{"errors": err.Error()}
 
@@ -79,7 +79,7 @@ func (h *userController) Login(c *gin.Context) {
 		return
 	}
 
-	token, err := h.authService.GenerateToken(loginUser.ID)
+	token, err := h.authService.GenerateToken(loginUser.ID, loginUser.RoleID)
 	if err != nil {
 		errorMessage := gin.H{"errors": err.Error()}
 

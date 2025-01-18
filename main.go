@@ -14,6 +14,7 @@ import (
 
 func main() {
 	//!! Database
+	//?? pindahin ke folder config nanti
 	dsn := "root:@tcp(127.0.0.1:3306)/project_akhir_dibimbing?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
@@ -36,6 +37,7 @@ func main() {
 
 	//!! Middleware
 	authMiddleware := middleware.AuthMiddleware(authService, userService)
+	authMiddlewareAdmin := middleware.AuthMiddlewareAdmin(authService, userService)
 
 	//!! Controller
 	roleController := controller.NewRoleController(roleService)
@@ -50,24 +52,35 @@ func main() {
 
 	//!! Role Route
 	api.POST("/role", roleController.CreateRole)
+	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? get role
+	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? update role
+	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? delete role
 
 	//!! User Route
 	api.POST("/register", userController.Register)
 	api.POST("/login", userController.Login)
-	api.POST("/email-checkers", userController.CheckEmailAvailability)
+	api.POST("/email-checkers", userController.CheckEmailAvailability) //?? belum terealisasi ke register
 	// api.POST("/upload_photo", authMiddleware(authService, userService), userController.UploadPhoto)
 	api.POST("/upload-photo", authMiddleware, userController.UploadPhoto)
+	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? update user
+	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? delete user
 
 	//!! Product Route
 	api.GET("/products", productController.GetAllProducts)
 	api.GET("/products/:id", productController.GetProduct)
-	api.POST("/products", productController.CreateProduct)
-	api.PUT("/products/:id", productController.UpdateProduct)
-	api.POST("/product-image", productController.UploadImage)
+	api.POST("/products", authMiddlewareAdmin, productController.CreateProduct)
+	api.PUT("/products/:id", authMiddlewareAdmin, productController.UpdateProduct)
+	api.POST("/product-image", authMiddlewareAdmin, productController.UploadImage)
+	api.DELETE("/products/:id", authMiddlewareAdmin, productController.DeleteProduct)
 
 	//!! Transaction Route
 	api.GET("/products/:id/transactions", authMiddleware, transactionController.GetProductTransactions)
 	api.GET("/transactions", authMiddleware, transactionController.GetUserTransactions)
+	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? create transaction
+	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? update transaction
+	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? pay transaction
+	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? delete transaction
+	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? change status transaction
 
 	router.Run()
 }
