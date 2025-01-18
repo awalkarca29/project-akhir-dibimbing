@@ -53,6 +53,15 @@ func (s *userService) Register(input RegisterInput) (entity.User, error) {
 	user.Password = string(password)
 	user.RoleID = 2
 
+	userEmail, err := s.userRepository.FindByEmail(user.Email)
+	if err != nil {
+		return user, err
+	}
+
+	if userEmail.ID != 0 {
+		return user, errors.New("email already exists")
+	}
+
 	newUser, err := s.userRepository.Save(user)
 	if err != nil {
 		return newUser, err

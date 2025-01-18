@@ -51,16 +51,13 @@ func main() {
 	api := router.Group("/api/v1")
 
 	//!! Role Route
-	api.POST("/role", roleController.CreateRole)
-	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? get role
-	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? update role
-	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? delete role
+	api.POST("/role", roleController.CreateRole) //!! DEVELOP ONLY
 
 	//!! User Route
 	api.POST("/register", userController.Register)
 	api.POST("/login", userController.Login)
-	api.POST("/email-checkers", userController.CheckEmailAvailability) //?? belum terealisasi ke register
-	// api.POST("/upload_photo", authMiddleware(authService, userService), userController.UploadPhoto)
+	api.POST("/email-checkers", userController.CheckEmailAvailability) //!! DEVELOP ONLY
+	// api.POST("/upload_photo", authMiddleware(authService, userService), userController.UploadPhoto) //!! Contoh Tanpa Dipisah Middleware
 	api.POST("/upload-photo", authMiddleware, userController.UploadPhoto)
 	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? update user
 	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? delete user
