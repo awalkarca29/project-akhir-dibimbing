@@ -172,7 +172,7 @@ func (h *productController) DeleteProduct(c *gin.Context) {
 
 	deletedProduct, err := h.productService.DeleteProduct(input)
 	if err != nil {
-		response := helper.APIResponse("Failed to update product", http.StatusBadRequest, "error", nil)
+		response := helper.APIResponse("Failed to delete product", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
