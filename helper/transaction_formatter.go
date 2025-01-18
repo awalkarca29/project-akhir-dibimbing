@@ -55,7 +55,7 @@ type UserTransactionFormatter struct {
 	PaymentMethod string                    `json:"payment_method"`
 	Status        string                    `json:"status"`
 	CreatedAt     time.Time                 `json:"created_at"`
-	Product       ProductUserTransFormatter `json:"campaign"`
+	Product       ProductUserTransFormatter `json:"product"`
 }
 
 type ProductUserTransFormatter struct {
@@ -99,4 +99,41 @@ func FormatUserTransactions(transactions []entity.Transaction) []UserTransaction
 	}
 
 	return transactionsFormatter
+}
+
+type CreateTransactionFormatter struct {
+	ID        int `json:"id"`
+	ProductID int `json:"product_id"`
+	UserID    int `json:"user_id"`
+	// Name          string    `json:"name"`
+	Quantity      int       `json:"quantity"`
+	Total         int       `json:"total"`
+	PaymentMethod string    `json:"payment_method"`
+	Status        string    `json:"status"`
+	CreatedAt     time.Time `json:"created_at"`
+	// Product       ProductUserTransFormatter `json:"product"`
+}
+
+func FormatCreateTransaction(transaction entity.Transaction) CreateTransactionFormatter {
+	formatter := CreateTransactionFormatter{}
+	formatter.ID = transaction.ID
+	formatter.ProductID = transaction.ProductID
+	formatter.UserID = transaction.UserID
+	// formatter.Name = transaction.User.Name
+	formatter.Quantity = transaction.Quantity
+	formatter.Total = transaction.Total
+	formatter.PaymentMethod = transaction.PaymentMethod
+	formatter.Status = transaction.Status
+	formatter.CreatedAt = transaction.CreatedAt
+
+	// productFormatter := ProductUserTransFormatter{}
+	// productFormatter.Name = transaction.Product.Name
+
+	// if len(transaction.Product.ProductImages) > 0 {
+	// 	productFormatter.ImageURL = transaction.Product.ProductImages[0].FileName
+	// }
+
+	// formatter.Product = productFormatter
+
+	return formatter
 }

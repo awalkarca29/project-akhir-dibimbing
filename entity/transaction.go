@@ -12,8 +12,8 @@ type Transaction struct {
 	Total         int
 	PaymentMethod string
 	Status        string
-	User          User
-	Product       Product
+	User          User    `gorm:"foreignKey:UserID"`
+	Product       Product `gorm:"foreignKey:ProductID"`
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 }

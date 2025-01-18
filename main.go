@@ -62,7 +62,6 @@ func main() {
 	api.GET("/users", authMiddlewareAdmin, userController.GetAllUsers)
 	api.PUT("/users", authMiddleware, userController.UpdateUser)
 	api.DELETE("/users", authMiddleware, userController.DeleteUser)
-	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? delete user
 
 	//!! Product Route
 	api.GET("/products", productController.GetAllProducts)
@@ -75,9 +74,8 @@ func main() {
 	//!! Transaction Route
 	api.GET("/products/:id/transactions", authMiddleware, transactionController.GetProductTransactions)
 	api.GET("/transactions", authMiddleware, transactionController.GetUserTransactions)
-	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? create transaction
-	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? update transaction
-	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? pay transaction
+	api.POST("/transactions", authMiddleware, transactionController.CreateTransaction)
+	api.PUT("/transactions/:id/pay", authMiddleware, transactionController.MarkPaid)
 	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? delete transaction
 	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? change status transaction
 

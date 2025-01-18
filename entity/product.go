@@ -11,6 +11,7 @@ type Product struct {
 	Stock         int
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
+	Transaction   []Transaction
 	ProductImages []ProductImage
 }
 
