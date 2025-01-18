@@ -168,3 +168,57 @@ func (h *userController) UploadPhoto(c *gin.Context) {
 	response := helper.APIResponse("Photo successfully uploaded", http.StatusOK, "success", data)
 	c.JSON(http.StatusOK, response)
 }
+
+func (h *userController) UpdateUser(c *gin.Context) {
+	var inputData service.UserInput
+
+	err := c.ShouldBindJSON(&inputData)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+
+		response := helper.APIResponse("Failed to update user", http.StatusUnprocessableEntity, "error", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	currentUser := c.MustGet("currentUser").(entity.User)
+	userID := currentUser.ID
+
+	updatedUser, err := h.userService.UpdateUser(userID, inputData)
+	if err != nil {
+		response := helper.APIResponse("Failed to update user", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := helper.APIResponse("Success to update user", http.StatusOK, "success", helper.FormatUserUpdate(updatedUser))
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *userController) DeleteUser(c *gin.Context) {
+	currentUser := c.MustGet("currentUser").(entity.User)
+	userID := currentUser.ID
+
+	deletedUser, err := h.userService.DeleteUser(userID)
+	if err != nil {
+		response := helper.APIResponse("Failed to delete user", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := helper.APIResponse("Success to delete user", http.StatusOK, "success", helper.FormatUserUpdate(deletedUser))
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *userController) GetAllUsers(c *gin.Context) {
+	users, err := h.userService.GetAllUsers()
+	if err != nil {
+		response := helper.APIResponse("Error to get users", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := helper.APIResponse("List of users", http.StatusOK, "success", helper.FormatUsers(users))
+	c.JSON(http.StatusOK, response)
+}

@@ -5,7 +5,7 @@ import "time"
 type User struct {
 	ID        int
 	RoleID    int
-	Role      Role
+	Roles     Role `gorm:"foreignKey:RoleID"`
 	Name      string
 	Email     string
 	Password  string

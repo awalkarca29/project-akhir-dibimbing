@@ -14,6 +14,12 @@ type RegisterInput struct {
 	Password string `json:"password" binding:"required"`
 }
 
+type UserInput struct {
+	Name    string `json:"name" binding:"required"`
+	Address string `json:"address" binding:"required"`
+	Phone   string `json:"phone" binding:"required"`
+}
+
 type LoginInput struct {
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required"`
@@ -26,8 +32,11 @@ type CheckEmailInput struct {
 type UserService interface {
 	Register(input RegisterInput) (entity.User, error)
 	Login(input LoginInput) (entity.User, error)
+	UpdateUser(ID int, inputData UserInput) (entity.User, error)
+	DeleteUser(ID int) (entity.User, error)
 	IsEmailAvailable(input CheckEmailInput) (bool, error)
 	UploadPhoto(ID int, fileLocation string) (entity.User, error)
+	GetAllUsers() ([]entity.User, error)
 	GetUserByID(ID int) (entity.User, error)
 	GetUserByRoleID(RoleID int) (entity.User, error)
 }
@@ -91,6 +100,38 @@ func (s *userService) Login(input LoginInput) (entity.User, error) {
 	return user, nil
 }
 
+func (s *userService) UpdateUser(ID int, inputData UserInput) (entity.User, error) {
+	user, err := s.userRepository.FindByID(ID)
+	if err != nil {
+		return user, err
+	}
+
+	user.Name = inputData.Name
+	user.Address = inputData.Address
+	user.Phone = inputData.Phone
+
+	updatedUser, err := s.userRepository.Update(user)
+	if err != nil {
+		return updatedUser, err
+	}
+
+	return updatedUser, nil
+}
+
+func (s *userService) DeleteUser(ID int) (entity.User, error) {
+	user, err := s.userRepository.FindByID(ID)
+	if err != nil {
+		return user, err
+	}
+
+	deleteUser, err := s.userRepository.Delete(user)
+	if err != nil {
+		return deleteUser, err
+	}
+
+	return deleteUser, nil
+}
+
 func (s *userService) IsEmailAvailable(input CheckEmailInput) (bool, error) {
 	email := input.Email
 
@@ -120,6 +161,14 @@ func (s *userService) UploadPhoto(ID int, fileLocation string) (entity.User, err
 	}
 
 	return updatedUser, nil
+}
+
+func (s *userService) GetAllUsers() ([]entity.User, error) {
+	users, err := s.userRepository.FindAll()
+	if err != nil {
+		return users, err
+	}
+	return users, nil
 }
 
 func (s *userService) GetUserByID(ID int) (entity.User, error) {

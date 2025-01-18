@@ -59,7 +59,9 @@ func main() {
 	api.POST("/email-checkers", userController.CheckEmailAvailability) //!! DEVELOP ONLY
 	// api.POST("/upload_photo", authMiddleware(authService, userService), userController.UploadPhoto) //!! Contoh Tanpa Dipisah Middleware
 	api.POST("/upload-photo", authMiddleware, userController.UploadPhoto)
-	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? update user
+	api.GET("/users", authMiddlewareAdmin, userController.GetAllUsers)
+	api.PUT("/users", authMiddleware, userController.UpdateUser)
+	api.DELETE("/users", authMiddleware, userController.DeleteUser)
 	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? delete user
 
 	//!! Product Route
