@@ -11,7 +11,7 @@ type TransactionRepository interface {
 	GetByUserID(UserID int) ([]entity.Transaction, error)
 	FindByID(ID int) (entity.Transaction, error)
 	Save(transaction entity.Transaction) (entity.Transaction, error)
-	MarkPaid(transaction entity.Transaction) (entity.Transaction, error)
+	MarkStatus(transaction entity.Transaction) (entity.Transaction, error)
 }
 
 type transactionRepository struct {
@@ -68,7 +68,7 @@ func (r *transactionRepository) Save(transaction entity.Transaction) (entity.Tra
 	return transaction, nil
 }
 
-func (r *transactionRepository) MarkPaid(transaction entity.Transaction) (entity.Transaction, error) {
+func (r *transactionRepository) MarkStatus(transaction entity.Transaction) (entity.Transaction, error) {
 	err := r.db.Save(&transaction).Error
 	if err != nil {
 		return transaction, err

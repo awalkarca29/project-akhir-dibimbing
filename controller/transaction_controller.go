@@ -53,6 +53,27 @@ func (h *transactionController) GetUserTransactions(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+func (h *transactionController) GetTransaction(c *gin.Context) {
+	var input service.GetTransactionInput
+
+	err := c.ShouldBindUri(&input)
+	if err != nil {
+		response := helper.APIResponse("Failed to get detail of transaction", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	transactionDetail, err := h.transactionService.GetTransactionByID(input)
+	if err != nil {
+		response := helper.APIResponse("Failed to get detail of transaction", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := helper.APIResponse("Transaction detail", http.StatusOK, "success", helper.FormatCreateTransaction(transactionDetail))
+	c.JSON(http.StatusOK, response)
+}
+
 func (h *transactionController) CreateTransaction(c *gin.Context) {
 	var input service.CreateTransactionInput
 
@@ -87,18 +108,71 @@ func (h *transactionController) MarkPaid(c *gin.Context) {
 
 	err := c.ShouldBindUri(&inputID)
 	if err != nil {
-		response := helper.APIResponse("Failed to update status", http.StatusBadRequest, "error", nil)
+		response := helper.APIResponse("Failed to pay transaction", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
 	markPaid, err := h.transactionService.MarkPaid(inputID)
 	if err != nil {
-		response := helper.APIResponse("Failed to update status", http.StatusBadRequest, "error", nil)
+		response := helper.APIResponse("Failed to pay transaction", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
-	response := helper.APIResponse("Success to update status", http.StatusOK, "success", helper.FormatCreateTransaction(markPaid))
+	response := helper.APIResponse("Success to pay transaction", http.StatusOK, "success", helper.FormatCreateTransaction(markPaid))
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *transactionController) MarkCancel(c *gin.Context) {
+	var inputID service.GetTransactionInput
+
+	err := c.ShouldBindUri(&inputID)
+	if err != nil {
+		response := helper.APIResponse("Failed to cancel transaction", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	markCancel, err := h.transactionService.MarkCancel(inputID)
+	if err != nil {
+		response := helper.APIResponse("Failed to cancel transaction", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := helper.APIResponse("Success to cancel transaction", http.StatusOK, "success", helper.FormatCreateTransaction(markCancel))
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *transactionController) MarkStatus(c *gin.Context) {
+	var inputID service.GetTransactionInput
+
+	err := c.ShouldBindUri(&inputID)
+	if err != nil {
+		response := helper.APIResponse("Failed to change status", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	var inputData service.GetTransactionStatusInput
+	err = c.ShouldBindJSON(&inputData)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+
+		response := helper.APIResponse("Failed to change status", http.StatusUnprocessableEntity, "error", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	markStatus, err := h.transactionService.MarkStatus(inputID, inputData)
+	if err != nil {
+		response := helper.APIResponse("Failed to change status", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := helper.APIResponse("Success to change status", http.StatusOK, "success", helper.FormatCreateTransaction(markStatus))
 	c.JSON(http.StatusOK, response)
 }

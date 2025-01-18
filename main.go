@@ -72,12 +72,13 @@ func main() {
 	api.DELETE("/products/:id", authMiddlewareAdmin, productController.DeleteProduct)
 
 	//!! Transaction Route
-	api.GET("/products/:id/transactions", authMiddleware, transactionController.GetProductTransactions)
+	api.GET("/products/:id/transactions", authMiddlewareAdmin, transactionController.GetProductTransactions)
 	api.GET("/transactions", authMiddleware, transactionController.GetUserTransactions)
+	api.GET("/transactions/:id", authMiddleware, transactionController.GetTransaction)
 	api.POST("/transactions", authMiddleware, transactionController.CreateTransaction)
 	api.PUT("/transactions/:id/pay", authMiddleware, transactionController.MarkPaid)
-	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? delete transaction
-	// api.POST("/upload-photo", authMiddleware, userController.UploadPhoto) //?? change status transaction
+	api.PUT("/transactions/:id/cancel", authMiddleware, transactionController.MarkCancel)
+	api.PUT("/transactions/:id/status", authMiddlewareAdmin, transactionController.MarkStatus)
 
 	router.Run()
 }
