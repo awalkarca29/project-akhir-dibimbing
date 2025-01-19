@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  # Service untuk aplikasi Go
+  app:
+    build: .
+    container_name: project-akhir-awal
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=host.docker.internal
+      - DB_USER=root
+      - DB_PASSWORD=
+      - DB_NAME=project_akhir_dibimbing
+    depends_on:
+      - mysql
+
+  # Service untuk MySQL
+  mysql:
+    image: mysql:8
+    container_name: project_akhir_dibimbing
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: project_akhir_dibimbing
+    ports:
+      - "3307:3307"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+      timeout: 5s
+
+volumes:
+  mysql-data:
