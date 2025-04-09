@@ -102,7 +102,7 @@ func AuthMiddlewareAdmin(authService service.AuthService, userService service.Us
 
 		roleID := int(claim["role_id"].(float64))
 		if roleID != 1 {
-			response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+			response := helper.APIResponse("Admin Authorized Only", http.StatusUnauthorized, "error", nil)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 			return
 		}
